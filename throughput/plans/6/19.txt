@@ -1,0 +1,70 @@
+BEGIN;
+BEGIN
+EXPLAIN
+select
+	sum(l_extendedprice* (1 - l_discount)) as revenue
+from
+	lineitem,
+	part
+where
+	(
+		p_partkey = l_partkey
+		and p_brand = 'Brand#23'
+		and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+		and l_quantity >= 5 and l_quantity <= 5+10
+		and p_size between 1 and 5
+		and l_shipmode in ('AIR', 'AIR REG')
+		and l_shipinstruct = 'DELIVER IN PERSON'
+	)
+	or
+	(
+		p_partkey = l_partkey
+		and p_brand = 'Brand#34'
+		and p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+		and l_quantity >= 16 and l_quantity <= 16+10
+		and p_size between 1 and 10
+		and l_shipmode in ('AIR', 'AIR REG')
+		and l_shipinstruct = 'DELIVER IN PERSON'
+	)
+	or
+	(
+		p_partkey = l_partkey
+		and p_brand = 'Brand#35'
+		and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+		and l_quantity >= 23 and l_quantity <= 23+10
+		and p_size between 1 and 15
+		and l_shipmode in ('AIR', 'AIR REG')
+		and l_shipinstruct = 'DELIVER IN PERSON'
+	);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  QUERY PLAN                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=620270.85..620270.86 rows=1 width=8)
+   ->  Nested Loop  (cost=12894.29..620262.21 rows=1152 width=8)
+         ->  Bitmap Heap Scan on part  (cost=12889.55..26768.65 rows=4837 width=30)
+               Recheck Cond: (((p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (p_brand = 'Brand#23'::bpchar) AND (p_size <= 5) AND (p_size >= 1)) OR ((p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (p_brand = 'Brand#34'::bpchar) AND (p_size <= 10) AND (p_size >= 1)) OR ((p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (p_brand = 'Brand#35'::bpchar) AND (p_size <= 15) AND (p_size >= 1)))
+               ->  BitmapOr  (cost=12889.55..12889.55 rows=4841 width=0)
+                     ->  BitmapAnd  (cost=2308.51..2308.51 rows=800 width=0)
+                           ->  Bitmap Index Scan on part_p_container_p_brand_p_partkey_idx  (cost=0.00..289.51 rows=7978 width=0)
+                                 Index Cond: ((p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (p_brand = 'Brand#23'::bpchar))
+                           ->  Bitmap Index Scan on part_p_size_brin_idx  (cost=0.00..2016.33 rows=200433 width=0)
+                                 Index Cond: ((p_size <= 5) AND (p_size >= 1))
+                     ->  BitmapAnd  (cost=4295.74..4295.74 rows=1600 width=0)
+                           ->  Bitmap Index Scan on part_p_container_p_brand_p_partkey_idx  (cost=0.00..289.87 rows=8016 width=0)
+                                 Index Cond: ((p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (p_brand = 'Brand#34'::bpchar))
+                           ->  Bitmap Index Scan on part_p_size_brin_idx  (cost=0.00..4003.20 rows=399120 width=0)
+                                 Index Cond: ((p_size <= 10) AND (p_size >= 1))
+                     ->  BitmapAnd  (cost=6284.79..6284.79 rows=2442 width=0)
+                           ->  Bitmap Index Scan on part_p_container_p_brand_p_partkey_idx  (cost=0.00..291.39 rows=8168 width=0)
+                                 Index Cond: ((p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (p_brand = 'Brand#35'::bpchar))
+                           ->  Bitmap Index Scan on part_p_size_brin_idx  (cost=0.00..5990.73 rows=597873 width=0)
+                                 Index Cond: ((p_size <= 15) AND (p_size >= 1))
+         ->  Bitmap Heap Scan on lineitem  (cost=4.74..122.69 rows=1 width=16)
+               Recheck Cond: (l_partkey = part.p_partkey)
+               Filter: ((l_shipmode = ANY ('{AIR,"AIR REG"}'::bpchar[])) AND (l_shipinstruct = 'DELIVER IN PERSON'::bpchar) AND (((l_quantity >= 5::double precision) AND (l_quantity <= 15::double precision)) OR ((l_quantity >= 16::double precision) AND (l_quantity <= 26::double precision)) OR ((l_quantity >= 23::double precision) AND (l_quantity <= 33::double precision))) AND (((part.p_brand = 'Brand#23'::bpchar) AND (part.p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (l_quantity >= 5::double precision) AND (l_quantity <= 15::double precision) AND (part.p_size <= 5)) OR ((part.p_brand = 'Brand#34'::bpchar) AND (part.p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (l_quantity >= 16::double precision) AND (l_quantity <= 26::double precision) AND (part.p_size <= 10)) OR ((part.p_brand = 'Brand#35'::bpchar) AND (part.p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (l_quantity >= 23::double precision) AND (l_quantity <= 33::double precision) AND (part.p_size <= 15))))
+               ->  Bitmap Index Scan on lineitem_l_partkey_l_quantity_idx  (cost=0.00..4.74 rows=31 width=0)
+                     Index Cond: (l_partkey = part.p_partkey)
+ Planning time: 2.826 ms
+(26 rows)
+
+COMMIT;
+COMMIT

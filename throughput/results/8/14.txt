@@ -1,0 +1,42 @@
+BEGIN;
+BEGIN
+EXPLAIN (ANALYZE, BUFFERS)
+select
+	100.00 * sum(case
+		when p_type like 'PROMO%'
+			then l_extendedprice * (1 - l_discount)
+		else 0
+	end) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
+from
+	lineitem,
+	part
+where
+	l_partkey = p_partkey
+	and l_shipdate >= date '1993-08-01'
+	and l_shipdate < cast(date '1993-08-01' + interval '1 month' as date);
+                                                                                  QUERY PLAN                                                                                  
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=1175073.43..1175073.45 rows=1 width=29) (actual time=25715.341..25715.341 rows=1 loops=1)
+   Buffers: shared hit=777426 read=337062 dirtied=857 written=2166
+   ->  Hash Join  (cost=93868.53..1161075.94 rows=799857 width=29) (actual time=1633.229..25283.198 rows=773518 loops=1)
+         Hash Cond: (lineitem.l_partkey = part.p_partkey)
+         Buffers: shared hit=777426 read=337062 dirtied=857 written=2166
+         ->  Bitmap Heap Scan on lineitem  (cost=8346.53..1063556.08 rows=799857 width=12) (actual time=121.119..22922.452 rows=773518 loops=1)
+               Recheck Cond: ((l_shipdate >= '1993-08-01'::date) AND (l_shipdate < '1993-09-01'::date))
+               Rows Removed by Index Recheck: 59211001
+               Heap Blocks: lossy=1073915
+               Buffers: shared hit=777421 read=296542 dirtied=857 written=1979
+               ->  Bitmap Index Scan on lineitem_l_shipdate_l_suppkey_brin_idx  (cost=0.00..8146.57 rows=799857 width=0) (actual time=120.270..120.270 rows=10739200 loops=1)
+                     Index Cond: ((l_shipdate >= '1993-08-01'::date) AND (l_shipdate < '1993-09-01'::date))
+                     Buffers: shared hit=13 read=35
+         ->  Hash  (cost=60522.00..60522.00 rows=2000000 width=25) (actual time=1505.890..1505.890 rows=2000000 loops=1)
+               Buckets: 2097152  Batches: 1  Memory Usage: 131903kB
+               Buffers: shared hit=2 read=40520 written=187
+               ->  Seq Scan on part  (cost=0.00..60522.00 rows=2000000 width=25) (actual time=0.007..883.886 rows=2000000 loops=1)
+                     Buffers: shared hit=2 read=40520 written=187
+ Planning time: 2.807 ms
+ Execution time: 25716.552 ms
+(20 rows)
+
+COMMIT;
+COMMIT

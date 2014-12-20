@@ -1,0 +1,2243 @@
+ctime,datname,pid,usesysid,usename,application_name,client_addr,client_port,backend_start,xact_start,query_start,waiting,query,state,state_change
+1416640064.27704,dbt3,10900,10,mark,psql,,-1,2014-11-22 08:07:44.275544+01,2014-11-22 08:07:44.277036+01,2014-11-22 08:07:44.277036+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV, HEADER);",active,2014-11-22 08:07:44.277041+01
+1416640064.27704,dbt3,10903,10,mark,psql,,-1,2014-11-22 08:07:44.275665+01,2014-11-22 08:07:44.277068+01,2014-11-22 08:07:44.277068+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV, HEADER);",active,2014-11-22 08:07:44.277072+01
+1416640064.27704,dbt3,10906,10,mark,psql,,-1,2014-11-22 08:07:44.275727+01,2014-11-22 08:07:44.277037+01,2014-11-22 08:07:44.277037+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV, HEADER);",active,2014-11-22 08:07:44.277042+01
+1416640064.27704,dbt3,10907,10,mark,psql,,-1,2014-11-22 08:07:44.275845+01,2014-11-22 08:07:44.277182+01,2014-11-22 08:07:44.277182+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV, HEADER);",active,2014-11-22 08:07:44.277186+01
+1416640064.27704,dbt3,10916,10,mark,psql,,-1,2014-11-22 08:07:44.276433+01,2014-11-22 08:07:44.277718+01,2014-11-22 08:07:44.277718+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV, HEADER);",active,2014-11-22 08:07:44.277723+01
+1416640064.27704,dbt3,10929,10,mark,psql,,-1,2014-11-22 08:07:44.277388+01,,,f,"",idle,2014-11-22 08:07:44.278825+01
+1416640124.28064,dbt3,12200,10,mark,psql,,-1,2014-11-22 08:08:21.23361+01,2014-11-22 08:08:21.235224+01,2014-11-22 08:08:21.239828+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_suppkey,
+	s_name,
+	s_address,
+	s_phone,
+	total_revenue
+from
+	supplier,
+	revenue5
+where
+	s_suppkey = supplier_no
+	and total_revenue = (
+		select
+			max(total_revenue)
+		from
+			revenue5
+	)
+order by
+	s_suppkey;",active,2014-11-22 08:08:21.23983+01
+1416640124.28064,dbt3,12063,10,mark,psql,,-1,2014-11-22 08:07:44.698997+01,2014-11-22 08:07:44.700435+01,2014-11-22 08:07:44.700551+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 313
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:07:44.700552+01
+1416640124.28064,dbt3,12231,10,mark,psql,,-1,2014-11-22 08:08:27.488592+01,2014-11-22 08:08:27.490412+01,2014-11-22 08:08:27.490545+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	sum(l_extendedprice * l_discount) as revenue
+from
+	lineitem
+where
+	l_shipdate >= date '1995-01-01'
+	and l_shipdate < cast(date '1995-01-01' + interval '1 year' as date)
+	and l_discount between 0.02 - 0.01 and 0.02 + 0.01
+	and l_quantity < 24;",active,2014-11-22 08:08:27.490547+01
+1416640124.28064,dbt3,12201,10,mark,psql,,-1,2014-11-22 08:08:21.234698+01,2014-11-22 08:08:21.236581+01,2014-11-22 08:08:21.236715+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue,
+	o_orderdate,
+	o_shippriority
+from
+	customer,
+	orders,
+	lineitem
+where
+	c_mktsegment = 'MACHINERY'
+	and c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and o_orderdate < date '1995-03-27'
+	and l_shipdate > date '1995-03-27'
+group by
+	l_orderkey,
+	o_orderdate,
+	o_shippriority
+order by
+	revenue desc,
+	o_orderdate
+LIMIT 10;",active,2014-11-22 08:08:21.236716+01
+1416640124.28064,dbt3,12081,10,mark,psql,,-1,2014-11-22 08:07:49.11199+01,2014-11-22 08:07:49.113799+01,2014-11-22 08:07:49.113952+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '64 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:07:49.113953+01
+1416640124.28064,dbt3,12174,10,mark,psql,,-1,2014-11-22 08:08:19.336212+01,2014-11-22 08:08:19.337976+01,2014-11-22 08:08:19.338126+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue,
+	o_orderdate,
+	o_shippriority
+from
+	customer,
+	orders,
+	lineitem
+where
+	c_mktsegment = 'BUILDING'
+	and c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and o_orderdate < date '1995-03-17'
+	and l_shipdate > date '1995-03-17'
+group by
+	l_orderkey,
+	o_orderdate,
+	o_shippriority
+order by
+	revenue desc,
+	o_orderdate
+LIMIT 10;",active,2014-11-22 08:08:19.338127+01
+1416640124.28064,dbt3,12273,10,mark,psql,,-1,2014-11-22 08:08:41.150051+01,2014-11-22 08:08:41.151668+01,2014-11-22 08:08:41.151862+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	100.00 * sum(case
+		when p_type like 'PROMO%'
+			then l_extendedprice * (1 - l_discount)
+		else 0
+	end) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
+from
+	lineitem,
+	part
+where
+	l_partkey = p_partkey
+	and l_shipdate >= date '1997-07-01'
+	and l_shipdate < cast(date '1997-07-01' + interval '1 month' as date);",active,2014-11-22 08:08:41.151864+01
+1416640124.28064,dbt3,12261,10,mark,psql,,-1,2014-11-22 08:08:40.902339+01,2014-11-22 08:08:40.903992+01,2014-11-22 08:08:40.904202+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	p_brand,
+	p_type,
+	p_size,
+	count(distinct ps_suppkey) as supplier_cnt
+from
+	partsupp,
+	part
+where
+	p_partkey = ps_partkey
+	and p_brand <> 'Brand#14'
+	and p_type not like 'LARGE PLATED%'
+	and p_size in (50, 46, 36, 20, 41, 32, 22, 16)
+	and ps_suppkey not in (
+		select
+			s_suppkey
+		from
+			supplier
+		where
+			s_comment like '%Customer%Complaints%'
+	)
+group by
+	p_brand,
+	p_type,
+	p_size
+order by
+	supplier_cnt desc,
+	p_brand,
+	p_type,
+	p_size;",active,2014-11-22 08:08:40.904203+01
+1416640124.28064,dbt3,12249,10,mark,psql,,-1,2014-11-22 08:08:38.010674+01,2014-11-22 08:08:38.012338+01,2014-11-22 08:08:38.035464+01,f,"DELETE FROM lineitem
+USING tmp_orderkey4
+WHERE l_orderkey = orderkey;",active,2014-11-22 08:08:38.035466+01
+1416640124.28064,dbt3,12282,10,mark,psql,,-1,2014-11-22 08:08:44.27778+01,2014-11-22 08:08:44.279357+01,2014-11-22 08:08:44.279357+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:08:44.279363+01
+1416640124.28064,dbt3,12283,10,mark,psql,,-1,2014-11-22 08:08:44.277909+01,2014-11-22 08:08:44.279463+01,2014-11-22 08:08:44.279463+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:08:44.279468+01
+1416640124.28064,dbt3,12284,10,mark,psql,,-1,2014-11-22 08:08:44.278056+01,2014-11-22 08:08:44.279496+01,2014-11-22 08:08:44.279496+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:08:44.279504+01
+1416640124.28064,dbt3,12285,10,mark,psql,,-1,2014-11-22 08:08:44.278842+01,2014-11-22 08:08:44.280218+01,2014-11-22 08:08:44.280218+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:08:44.280223+01
+1416640124.28064,dbt3,12281,10,mark,psql,,-1,2014-11-22 08:08:44.277712+01,2014-11-22 08:08:44.28064+01,2014-11-22 08:08:44.28064+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:08:44.280644+01
+1416640184.28137,dbt3,12533,10,mark,psql,,-1,2014-11-22 08:09:42.283684+01,2014-11-22 08:09:42.285403+01,2014-11-22 08:09:42.285628+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	supp_nation,
+	cust_nation,
+	l_year,
+	sum(volume) as revenue
+from
+	(
+		select
+			n1.n_name as supp_nation,
+			n2.n_name as cust_nation,
+			extract(year from l_shipdate) as l_year,
+			l_extendedprice * (1 - l_discount) as volume
+		from
+			supplier,
+			lineitem,
+			orders,
+			customer,
+			nation n1,
+			nation n2
+		where
+			s_suppkey = l_suppkey
+			and o_orderkey = l_orderkey
+			and c_custkey = o_custkey
+			and s_nationkey = n1.n_nationkey
+			and c_nationkey = n2.n_nationkey
+			and (
+				(n1.n_name = 'IRAN' and n2.n_name = 'MOROCCO')
+				or (n1.n_name = 'MOROCCO' and n2.n_name = 'IRAN')
+			)
+			and l_shipdate between date '1995-01-01' and date '1996-12-31'
+	) as shipping
+group by
+	supp_nation,
+	cust_nation,
+	l_year
+order by
+	supp_nation,
+	cust_nation,
+	l_year;",active,2014-11-22 08:09:42.28563+01
+1416640184.28137,dbt3,12412,10,mark,psql,,-1,2014-11-22 08:09:04.451016+01,2014-11-22 08:09:04.45261+01,2014-11-22 08:09:04.456949+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_suppkey,
+	s_name,
+	s_address,
+	s_phone,
+	total_revenue
+from
+	supplier,
+	revenue4
+where
+	s_suppkey = supplier_no
+	and total_revenue = (
+		select
+			max(total_revenue)
+		from
+			revenue4
+	)
+order by
+	s_suppkey;",active,2014-11-22 08:09:04.456951+01
+1416640184.28137,dbt3,12495,10,mark,psql,,-1,2014-11-22 08:09:22.335012+01,2014-11-22 08:09:22.33671+01,2014-11-22 08:09:22.336929+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '85 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:09:22.33693+01
+1416640184.28137,dbt3,12363,10,mark,psql,,-1,2014-11-22 08:08:58.633822+01,2014-11-22 08:08:58.635603+01,2014-11-22 08:08:58.635775+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 312
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:08:58.635776+01
+1416640184.28137,dbt3,12483,10,mark,psql,,-1,2014-11-22 08:09:19.936672+01,2014-11-22 08:09:19.938355+01,2014-11-22 08:09:19.942982+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_suppkey,
+	s_name,
+	s_address,
+	s_phone,
+	total_revenue
+from
+	supplier,
+	revenue8
+where
+	s_suppkey = supplier_no
+	and total_revenue = (
+		select
+			max(total_revenue)
+		from
+			revenue8
+	)
+order by
+	s_suppkey;",active,2014-11-22 08:09:19.942983+01
+1416640184.28137,dbt3,12364,10,mark,psql,,-1,2014-11-22 08:08:58.641333+01,2014-11-22 08:08:58.643103+01,2014-11-22 08:08:58.648252+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_suppkey,
+	s_name,
+	s_address,
+	s_phone,
+	total_revenue
+from
+	supplier,
+	revenue6
+where
+	s_suppkey = supplier_no
+	and total_revenue = (
+		select
+			max(total_revenue)
+		from
+			revenue6
+	)
+order by
+	s_suppkey;",active,2014-11-22 08:08:58.648255+01
+1416640184.28137,dbt3,12454,10,mark,psql,,-1,2014-11-22 08:09:13.183066+01,2014-11-22 08:09:13.184746+01,2014-11-22 08:09:13.184915+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_name,
+	count(*) as numwait
+from
+	supplier,
+	lineitem l1,
+	orders,
+	nation
+where
+	s_suppkey = l1.l_suppkey
+	and o_orderkey = l1.l_orderkey
+	and o_orderstatus = 'F'
+	and l1.l_receiptdate > l1.l_commitdate
+	and exists (
+		select
+			*
+		from
+			lineitem l2
+		where
+			l2.l_orderkey = l1.l_orderkey
+			and l2.l_suppkey <> l1.l_suppkey
+	)
+	and not exists (
+		select
+			*
+		from
+			lineitem l3
+		where
+			l3.l_orderkey = l1.l_orderkey
+			and l3.l_suppkey <> l1.l_suppkey
+			and l3.l_receiptdate > l3.l_commitdate
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'CANADA'
+group by
+	s_name
+order by
+	numwait desc,
+	s_name
+LIMIT 100;",active,2014-11-22 08:09:13.184916+01
+1416640184.28137,dbt3,12521,10,mark,psql,,-1,2014-11-22 08:09:24.780936+01,2014-11-22 08:09:24.782578+01,2014-11-22 08:09:24.78278+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%chocolate%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:09:24.782782+01
+1416640184.28137,dbt3,12509,10,mark,psql,,-1,2014-11-22 08:09:23.657816+01,2014-11-22 08:09:23.659463+01,2014-11-22 08:09:23.680881+01,f,"DELETE FROM lineitem
+USING tmp_orderkey5
+WHERE l_orderkey = orderkey;",active,2014-11-22 08:09:23.680883+01
+1416640184.28137,dbt3,12541,10,mark,psql,,-1,2014-11-22 08:09:44.279491+01,2014-11-22 08:09:44.281376+01,2014-11-22 08:09:44.281376+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:09:44.281381+01
+1416640184.28137,dbt3,12542,10,mark,psql,,-1,2014-11-22 08:09:44.279494+01,2014-11-22 08:09:44.281367+01,2014-11-22 08:09:44.281367+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:09:44.281372+01
+1416640184.28137,dbt3,12543,10,mark,psql,,-1,2014-11-22 08:09:44.27958+01,2014-11-22 08:09:44.281333+01,2014-11-22 08:09:44.281333+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:09:44.281338+01
+1416640184.28137,dbt3,12544,10,mark,psql,,-1,2014-11-22 08:09:44.279688+01,2014-11-22 08:09:44.281337+01,2014-11-22 08:09:44.281337+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:09:44.281342+01
+1416640184.28137,dbt3,12545,10,mark,psql,,-1,2014-11-22 08:09:44.279983+01,2014-11-22 08:09:44.28149+01,2014-11-22 08:09:44.28149+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:09:44.281495+01
+1416640244.28539,dbt3,12761,10,mark,psql,,-1,2014-11-22 08:10:21.013326+01,2014-11-22 08:10:21.015163+01,2014-11-22 08:10:21.015317+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 314
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:10:21.015318+01
+1416640244.28539,dbt3,12762,10,mark,psql,,-1,2014-11-22 08:10:21.024037+01,2014-11-22 08:10:21.025822+01,2014-11-22 08:10:21.026021+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	sum(l_extendedprice * l_discount) as revenue
+from
+	lineitem
+where
+	l_shipdate >= date '1995-01-01'
+	and l_shipdate < cast(date '1995-01-01' + interval '1 year' as date)
+	and l_discount between 0.08 - 0.01 and 0.08 + 0.01
+	and l_quantity < 25;",active,2014-11-22 08:10:21.026022+01
+1416640244.28539,dbt3,12495,10,mark,psql,,-1,2014-11-22 08:09:22.335012+01,2014-11-22 08:09:22.33671+01,2014-11-22 08:09:22.336929+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '85 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:09:22.33693+01
+1416640244.28539,dbt3,12774,10,mark,psql,,-1,2014-11-22 08:10:27.979461+01,2014-11-22 08:10:27.981187+01,2014-11-22 08:10:27.981337+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	supp_nation,
+	cust_nation,
+	l_year,
+	sum(volume) as revenue
+from
+	(
+		select
+			n1.n_name as supp_nation,
+			n2.n_name as cust_nation,
+			extract(year from l_shipdate) as l_year,
+			l_extendedprice * (1 - l_discount) as volume
+		from
+			supplier,
+			lineitem,
+			orders,
+			customer,
+			nation n1,
+			nation n2
+		where
+			s_suppkey = l_suppkey
+			and o_orderkey = l_orderkey
+			and c_custkey = o_custkey
+			and s_nationkey = n1.n_nationkey
+			and c_nationkey = n2.n_nationkey
+			and (
+				(n1.n_name = 'PERU' and n2.n_name = 'RUSSIA')
+				or (n1.n_name = 'RUSSIA' and n2.n_name = 'PERU')
+			)
+			and l_shipdate between date '1995-01-01' and date '1996-12-31'
+	) as shipping
+group by
+	supp_nation,
+	cust_nation,
+	l_year
+order by
+	supp_nation,
+	cust_nation,
+	l_year;",active,2014-11-22 08:10:27.981338+01
+1416640244.28539,dbt3,12840,10,mark,psql,,-1,2014-11-22 08:10:40.242067+01,2014-11-22 08:10:40.243794+01,2014-11-22 08:10:40.244008+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%rosy%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:10:40.24401+01
+1416640244.28539,dbt3,12702,10,mark,psql,,-1,2014-11-22 08:10:17.718061+01,2014-11-22 08:10:17.720175+01,2014-11-22 08:10:17.720339+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	sum(l_extendedprice * l_discount) as revenue
+from
+	lineitem
+where
+	l_shipdate >= date '1996-01-01'
+	and l_shipdate < cast(date '1996-01-01' + interval '1 year' as date)
+	and l_discount between 0.02 - 0.01 and 0.02 + 0.01
+	and l_quantity < 24;",active,2014-11-22 08:10:17.72034+01
+1416640244.28539,dbt3,12810,10,mark,psql,,-1,2014-11-22 08:10:28.792968+01,2014-11-22 08:10:28.794965+01,2014-11-22 08:10:28.795113+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '117 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:10:28.795115+01
+1416640244.28539,dbt3,12521,10,mark,psql,,-1,2014-11-22 08:09:24.780936+01,2014-11-22 08:09:24.782578+01,2014-11-22 08:09:24.78278+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%chocolate%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:09:24.782782+01
+1416640244.28539,dbt3,12849,10,mark,psql,,-1,2014-11-22 08:10:44.281486+01,2014-11-22 08:10:44.283304+01,2014-11-22 08:10:44.283304+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:10:44.283309+01
+1416640244.28539,dbt3,12850,10,mark,psql,,-1,2014-11-22 08:10:44.281583+01,2014-11-22 08:10:44.283353+01,2014-11-22 08:10:44.283353+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:10:44.283358+01
+1416640244.28539,dbt3,12848,10,mark,psql,,-1,2014-11-22 08:10:44.281391+01,2014-11-22 08:10:44.283349+01,2014-11-22 08:10:44.283349+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:10:44.283355+01
+1416640244.28539,dbt3,12851,10,mark,psql,,-1,2014-11-22 08:10:44.281695+01,2014-11-22 08:10:44.286423+01,2014-11-22 08:10:44.286423+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:10:44.286428+01
+1416640244.28539,dbt3,12852,10,mark,psql,,-1,2014-11-22 08:10:44.281768+01,2014-11-22 08:10:44.28539+01,2014-11-22 08:10:44.28539+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:10:44.285394+01
+1416640304.287,dbt3,13033,10,mark,psql,,-1,2014-11-22 08:11:28.26915+01,2014-11-22 08:11:28.270967+01,2014-11-22 08:11:28.271117+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	100.00 * sum(case
+		when p_type like 'PROMO%'
+			then l_extendedprice * (1 - l_discount)
+		else 0
+	end) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
+from
+	lineitem,
+	part
+where
+	l_partkey = p_partkey
+	and l_shipdate >= date '1997-10-01'
+	and l_shipdate < cast(date '1997-10-01' + interval '1 month' as date);",active,2014-11-22 08:11:28.271118+01
+1416640304.287,dbt3,12942,10,mark,psql,,-1,2014-11-22 08:10:59.53264+01,2014-11-22 08:10:59.534639+01,2014-11-22 08:10:59.534819+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%azure%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:10:59.534821+01
+1416640304.287,dbt3,12918,10,mark,psql,,-1,2014-11-22 08:10:51.950614+01,2014-11-22 08:10:51.952504+01,2014-11-22 08:10:51.952715+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 315
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:10:51.952717+01
+1416640304.287,dbt3,13021,10,mark,psql,,-1,2014-11-22 08:11:26.926323+01,2014-11-22 08:11:26.928136+01,2014-11-22 08:11:26.928361+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_shipmode,
+	sum(case
+		when o_orderpriority = '1-URGENT'
+			or o_orderpriority = '2-HIGH'
+			then 1
+		else 0
+	end) as high_line_count,
+	sum(case
+		when o_orderpriority <> '1-URGENT'
+			and o_orderpriority <> '2-HIGH'
+			then 1
+		else 0
+	end) as low_line_count
+from
+	orders,
+	lineitem
+where
+	o_orderkey = l_orderkey
+	and l_shipmode in ('REG AIR', 'TRUCK')
+	and l_commitdate < l_receiptdate
+	and l_shipdate < l_commitdate
+	and l_receiptdate >= date '1996-01-01'
+	and l_receiptdate < date '1996-01-01' + interval '1 year'
+group by
+	l_shipmode
+order by
+	l_shipmode;",active,2014-11-22 08:11:26.928363+01
+1416640304.287,dbt3,12840,10,mark,psql,,-1,2014-11-22 08:10:40.242067+01,2014-11-22 08:10:40.243794+01,2014-11-22 08:10:40.244008+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%rosy%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:10:40.24401+01
+1416640304.287,dbt3,12930,10,mark,psql,,-1,2014-11-22 08:10:58.03025+01,2014-11-22 08:10:58.032414+01,2014-11-22 08:10:58.03256+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%steel%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:10:58.032561+01
+1416640304.287,dbt3,12810,10,mark,psql,,-1,2014-11-22 08:10:28.792968+01,2014-11-22 08:10:28.794965+01,2014-11-22 08:10:28.795113+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '117 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:10:28.795115+01
+1416640304.287,dbt3,12966,10,mark,psql,,-1,2014-11-22 08:11:11.158693+01,2014-11-22 08:11:11.1604+01,2014-11-22 08:11:11.16595+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_suppkey,
+	s_name,
+	s_address,
+	s_phone,
+	total_revenue
+from
+	supplier,
+	revenue2
+where
+	s_suppkey = supplier_no
+	and total_revenue = (
+		select
+			max(total_revenue)
+		from
+			revenue2
+	)
+order by
+	s_suppkey;",active,2014-11-22 08:11:11.165952+01
+1416640304.287,dbt3,13051,10,mark,psql,,-1,2014-11-22 08:11:32.083882+01,2014-11-22 08:11:32.085634+01,2014-11-22 08:11:32.107791+01,f,"DELETE FROM lineitem
+USING tmp_orderkey8
+WHERE l_orderkey = orderkey;",active,2014-11-22 08:11:32.107792+01
+1416640304.287,dbt3,13059,10,mark,psql,,-1,2014-11-22 08:11:44.28446+01,2014-11-22 08:11:44.287565+01,2014-11-22 08:11:44.287565+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:11:44.28757+01
+1416640304.287,dbt3,13060,10,mark,psql,,-1,2014-11-22 08:11:44.284585+01,2014-11-22 08:11:44.287005+01,2014-11-22 08:11:44.287005+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:11:44.287015+01
+1416640304.287,dbt3,13061,10,mark,psql,,-1,2014-11-22 08:11:44.284651+01,2014-11-22 08:11:44.287564+01,2014-11-22 08:11:44.287564+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:11:44.28757+01
+1416640304.287,dbt3,13062,10,mark,psql,,-1,2014-11-22 08:11:44.284943+01,2014-11-22 08:11:44.287632+01,2014-11-22 08:11:44.287632+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:11:44.287639+01
+1416640304.287,dbt3,13063,10,mark,psql,,-1,2014-11-22 08:11:44.28504+01,2014-11-22 08:11:44.287282+01,2014-11-22 08:11:44.287282+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:11:44.287288+01
+1416640364.28832,dbt3,13304,10,mark,psql,,-1,2014-11-22 08:12:36.091183+01,2014-11-22 08:12:36.092892+01,2014-11-22 08:12:36.093078+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue,
+	o_orderdate,
+	o_shippriority
+from
+	customer,
+	orders,
+	lineitem
+where
+	c_mktsegment = 'HOUSEHOLD'
+	and c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and o_orderdate < date '1995-03-31'
+	and l_shipdate > date '1995-03-31'
+group by
+	l_orderkey,
+	o_orderdate,
+	o_shippriority
+order by
+	revenue desc,
+	o_orderdate
+LIMIT 10;",active,2014-11-22 08:12:36.09308+01
+1416640364.28832,dbt3,13328,10,mark,psql,,-1,2014-11-22 08:12:41.217087+01,2014-11-22 08:12:41.218952+01,2014-11-22 08:12:41.219161+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	p_brand,
+	p_type,
+	p_size,
+	count(distinct ps_suppkey) as supplier_cnt
+from
+	partsupp,
+	part
+where
+	p_partkey = ps_partkey
+	and p_brand <> 'Brand#24'
+	and p_type not like 'MEDIUM ANODIZED%'
+	and p_size in (6, 38, 1, 29, 35, 18, 24, 7)
+	and ps_suppkey not in (
+		select
+			s_suppkey
+		from
+			supplier
+		where
+			s_comment like '%Customer%Complaints%'
+	)
+group by
+	p_brand,
+	p_type,
+	p_size
+order by
+	supplier_cnt desc,
+	p_brand,
+	p_type,
+	p_size;",active,2014-11-22 08:12:41.219163+01
+1416640364.28832,dbt3,13292,10,mark,psql,,-1,2014-11-22 08:12:34.967345+01,2014-11-22 08:12:34.969131+01,2014-11-22 08:12:34.969276+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%blush%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:12:34.969278+01
+1416640364.28832,dbt3,13201,10,mark,psql,,-1,2014-11-22 08:12:10.277955+01,2014-11-22 08:12:10.279647+01,2014-11-22 08:12:10.285003+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_suppkey,
+	s_name,
+	s_address,
+	s_phone,
+	total_revenue
+from
+	supplier,
+	revenue1
+where
+	s_suppkey = supplier_no
+	and total_revenue = (
+		select
+			max(total_revenue)
+		from
+			revenue1
+	)
+order by
+	s_suppkey;",active,2014-11-22 08:12:10.285005+01
+1416640364.28832,dbt3,13244,10,mark,psql,,-1,2014-11-22 08:12:13.675732+01,2014-11-22 08:12:13.680916+01,2014-11-22 08:12:13.681078+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_shipmode,
+	sum(case
+		when o_orderpriority = '1-URGENT'
+			or o_orderpriority = '2-HIGH'
+			then 1
+		else 0
+	end) as high_line_count,
+	sum(case
+		when o_orderpriority <> '1-URGENT'
+			and o_orderpriority <> '2-HIGH'
+			then 1
+		else 0
+	end) as low_line_count
+from
+	orders,
+	lineitem
+where
+	o_orderkey = l_orderkey
+	and l_shipmode in ('FOB', 'REG AIR')
+	and l_commitdate < l_receiptdate
+	and l_shipdate < l_commitdate
+	and l_receiptdate >= date '1995-01-01'
+	and l_receiptdate < date '1995-01-01' + interval '1 year'
+group by
+	l_shipmode
+order by
+	l_shipmode;",active,2014-11-22 08:12:13.68108+01
+1416640364.28832,dbt3,13280,10,mark,psql,,-1,2014-11-22 08:12:30.369137+01,2014-11-22 08:12:30.370886+01,2014-11-22 08:12:30.371106+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	supp_nation,
+	cust_nation,
+	l_year,
+	sum(volume) as revenue
+from
+	(
+		select
+			n1.n_name as supp_nation,
+			n2.n_name as cust_nation,
+			extract(year from l_shipdate) as l_year,
+			l_extendedprice * (1 - l_discount) as volume
+		from
+			supplier,
+			lineitem,
+			orders,
+			customer,
+			nation n1,
+			nation n2
+		where
+			s_suppkey = l_suppkey
+			and o_orderkey = l_orderkey
+			and c_custkey = o_custkey
+			and s_nationkey = n1.n_nationkey
+			and c_nationkey = n2.n_nationkey
+			and (
+				(n1.n_name = 'BRAZIL' and n2.n_name = 'GERMANY')
+				or (n1.n_name = 'GERMANY' and n2.n_name = 'BRAZIL')
+			)
+			and l_shipdate between date '1995-01-01' and date '1996-12-31'
+	) as shipping
+group by
+	supp_nation,
+	cust_nation,
+	l_year
+order by
+	supp_nation,
+	cust_nation,
+	l_year;",active,2014-11-22 08:12:30.371107+01
+1416640364.28832,dbt3,13165,10,mark,psql,,-1,2014-11-22 08:12:06.302303+01,2014-11-22 08:12:06.304122+01,2014-11-22 08:12:06.304276+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%sienna%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:12:06.304277+01
+1416640364.28832,dbt3,13316,10,mark,psql,,-1,2014-11-22 08:12:39.349364+01,2014-11-22 08:12:39.351204+01,2014-11-22 08:12:39.351367+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_shipmode,
+	sum(case
+		when o_orderpriority = '1-URGENT'
+			or o_orderpriority = '2-HIGH'
+			then 1
+		else 0
+	end) as high_line_count,
+	sum(case
+		when o_orderpriority <> '1-URGENT'
+			and o_orderpriority <> '2-HIGH'
+			then 1
+		else 0
+	end) as low_line_count
+from
+	orders,
+	lineitem
+where
+	o_orderkey = l_orderkey
+	and l_shipmode in ('SHIP', 'TRUCK')
+	and l_commitdate < l_receiptdate
+	and l_shipdate < l_commitdate
+	and l_receiptdate >= date '1997-01-01'
+	and l_receiptdate < date '1997-01-01' + interval '1 year'
+group by
+	l_shipmode
+order by
+	l_shipmode;",active,2014-11-22 08:12:39.351369+01
+1416640364.28832,dbt3,13231,10,mark,psql,,-1,2014-11-22 08:12:13.341933+01,2014-11-22 08:12:13.343669+01,2014-11-22 08:12:39.177692+01,f,"DELETE FROM orders
+USING tmp_orderkey9
+WHERE o_orderkey = orderkey;",active,2014-11-22 08:12:39.177695+01
+1416640364.28832,dbt3,13337,10,mark,psql,,-1,2014-11-22 08:12:44.286465+01,2014-11-22 08:12:44.288316+01,2014-11-22 08:12:44.288316+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:12:44.288321+01
+1416640364.28832,dbt3,13338,10,mark,psql,,-1,2014-11-22 08:12:44.286535+01,2014-11-22 08:12:44.288319+01,2014-11-22 08:12:44.288319+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:12:44.288323+01
+1416640364.28832,dbt3,13336,10,mark,psql,,-1,2014-11-22 08:12:44.286362+01,2014-11-22 08:12:44.288291+01,2014-11-22 08:12:44.288291+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:12:44.288296+01
+1416640364.28832,dbt3,13339,10,mark,psql,,-1,2014-11-22 08:12:44.286662+01,2014-11-22 08:12:44.288322+01,2014-11-22 08:12:44.288322+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:12:44.288327+01
+1416640364.28832,dbt3,13340,10,mark,psql,,-1,2014-11-22 08:12:44.286749+01,2014-11-22 08:12:44.288293+01,2014-11-22 08:12:44.288293+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:12:44.288297+01
+1416640424.29012,dbt3,13494,10,mark,psql,,-1,2014-11-22 08:13:12.116844+01,2014-11-22 08:13:12.118587+01,2014-11-22 08:13:12.118786+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '101 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:13:12.118788+01
+1416640424.29012,dbt3,13634,10,mark,psql,,-1,2014-11-22 08:13:34.019187+01,2014-11-22 08:13:34.021004+01,2014-11-22 08:13:34.021138+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_count,
+	count(*) as custdist
+from
+	(
+		select
+			c_custkey,
+			count(o_orderkey)
+		from
+			customer left outer join orders on
+				c_custkey = o_custkey
+				and o_comment not like '%unusual%deposits%'
+		group by
+			c_custkey
+	) as c_orders (c_custkey, c_count)
+group by
+	c_count
+order by
+	custdist desc,
+	c_count desc;",active,2014-11-22 08:13:34.021139+01
+1416640424.29012,dbt3,13292,10,mark,psql,,-1,2014-11-22 08:12:34.967345+01,2014-11-22 08:12:34.969131+01,2014-11-22 08:12:34.969276+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%blush%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:12:34.969278+01
+1416640424.29012,dbt3,13531,10,mark,psql,,-1,2014-11-22 08:13:24.923511+01,2014-11-22 08:13:24.925322+01,2014-11-22 08:13:24.925481+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_custkey,
+	c_name,
+	sum(l_extendedprice * (1 - l_discount)) as revenue,
+	c_acctbal,
+	n_name,
+	c_address,
+	c_phone,
+	c_comment
+from
+	customer,
+	orders,
+	lineitem,
+	nation
+where
+	c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and o_orderdate >= date '1993-12-01'
+	and o_orderdate < cast(date '1993-12-01' + interval '3 month' as date)
+	and l_returnflag = 'R'
+	and c_nationkey = n_nationkey
+group by
+	c_custkey,
+	c_name,
+	c_acctbal,
+	c_phone,
+	n_name,
+	c_address,
+	c_comment
+order by
+	revenue desc
+LIMIT 20;",active,2014-11-22 08:13:24.925483+01
+1416640424.29012,dbt3,13635,10,mark,psql,,-1,2014-11-22 08:13:34.020449+01,2014-11-22 08:13:34.022238+01,2014-11-22 08:13:34.022381+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	o_orderpriority,
+	count(*) as order_count
+from
+	orders
+where
+	o_orderdate >= date '1995-10-01'
+	and o_orderdate < cast(date '1995-10-01' + interval '3 month' as date)
+	and exists (
+		select
+			*
+		from
+			lineitem
+		where
+			l_orderkey = o_orderkey
+			and l_commitdate < l_receiptdate
+	)
+group by
+	o_orderpriority
+order by
+	o_orderpriority;",active,2014-11-22 08:13:34.022383+01
+1416640424.29012,dbt3,13543,10,mark,psql,,-1,2014-11-22 08:13:25.213321+01,2014-11-22 08:13:25.215198+01,2014-11-22 08:13:25.215332+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 312
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:13:25.215333+01
+1416640424.29012,dbt3,13671,10,mark,psql,,-1,2014-11-22 08:13:43.314746+01,2014-11-22 08:13:43.316612+01,2014-11-22 08:13:43.316787+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue,
+	o_orderdate,
+	o_shippriority
+from
+	customer,
+	orders,
+	lineitem
+where
+	c_mktsegment = 'HOUSEHOLD'
+	and c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and o_orderdate < date '1995-03-02'
+	and l_shipdate > date '1995-03-02'
+group by
+	l_orderkey,
+	o_orderdate,
+	o_shippriority
+order by
+	revenue desc,
+	o_orderdate
+LIMIT 10;",active,2014-11-22 08:13:43.316789+01
+1416640424.29012,dbt3,13659,10,mark,psql,,-1,2014-11-22 08:13:41.320828+01,2014-11-22 08:13:41.322633+01,2014-11-22 08:13:41.322784+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 313
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:13:41.322785+01
+1416640424.29012,dbt3,13680,10,mark,psql,,-1,2014-11-22 08:13:44.288389+01,2014-11-22 08:13:44.290125+01,2014-11-22 08:13:44.290125+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:13:44.290129+01
+1416640424.29012,dbt3,13681,10,mark,psql,,-1,2014-11-22 08:13:44.288492+01,2014-11-22 08:13:44.290119+01,2014-11-22 08:13:44.290119+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:13:44.290123+01
+1416640424.29012,dbt3,13679,10,mark,psql,,-1,2014-11-22 08:13:44.288288+01,2014-11-22 08:13:44.290318+01,2014-11-22 08:13:44.290318+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:13:44.290324+01
+1416640424.29012,dbt3,13682,10,mark,psql,,-1,2014-11-22 08:13:44.288574+01,2014-11-22 08:13:44.290333+01,2014-11-22 08:13:44.290333+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:13:44.290338+01
+1416640424.29012,dbt3,13683,10,mark,psql,,-1,2014-11-22 08:13:44.288678+01,2014-11-22 08:13:44.290348+01,2014-11-22 08:13:44.290348+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:13:44.290352+01
+1416640484.29194,dbt3,13885,10,mark,psql,,-1,2014-11-22 08:14:41.194328+01,2014-11-22 08:14:41.196092+01,2014-11-22 08:14:41.196241+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_acctbal,
+	s_name,
+	n_name,
+	p_partkey,
+	p_mfgr,
+	s_address,
+	s_phone,
+	s_comment
+from
+	part,
+	supplier,
+	partsupp,
+	nation,
+	region
+where
+	p_partkey = ps_partkey
+	and s_suppkey = ps_suppkey
+	and p_size = 1
+	and p_type like '%STEEL'
+	and s_nationkey = n_nationkey
+	and n_regionkey = r_regionkey
+	and r_name = 'MIDDLE EAST'
+	and ps_supplycost = (
+		select
+			min(ps_supplycost)
+		from
+			partsupp,
+			supplier,
+			nation,
+			region
+		where
+			p_partkey = ps_partkey
+			and s_suppkey = ps_suppkey
+			and s_nationkey = n_nationkey
+			and n_regionkey = r_regionkey
+			and r_name = 'MIDDLE EAST'
+	)
+order by
+	s_acctbal desc,
+	n_name,
+	s_name,
+	p_partkey
+LIMIT 100;",active,2014-11-22 08:14:41.196242+01
+1416640484.29194,dbt3,13738,10,mark,psql,,-1,2014-11-22 08:14:00.623214+01,2014-11-22 08:14:00.625058+01,2014-11-22 08:14:00.625206+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 314
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:14:00.625208+01
+1416640484.29194,dbt3,13861,10,mark,psql,,-1,2014-11-22 08:14:38.807309+01,2014-11-22 08:14:38.809234+01,2014-11-22 08:14:38.81472+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_suppkey,
+	s_name,
+	s_address,
+	s_phone,
+	total_revenue
+from
+	supplier,
+	revenue3
+where
+	s_suppkey = supplier_no
+	and total_revenue = (
+		select
+			max(total_revenue)
+		from
+			revenue3
+	)
+order by
+	s_suppkey;",active,2014-11-22 08:14:38.814723+01
+1416640484.29194,dbt3,13909,10,mark,psql,,-1,2014-11-22 08:14:43.369393+01,2014-11-22 08:14:43.371163+01,2014-11-22 08:14:43.371362+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%dark%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:14:43.371364+01
+1416640484.29194,dbt3,13873,10,mark,psql,,-1,2014-11-22 08:14:39.101674+01,2014-11-22 08:14:39.103616+01,2014-11-22 08:14:39.103807+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	sum(l_extendedprice * l_discount) as revenue
+from
+	lineitem
+where
+	l_shipdate >= date '1996-01-01'
+	and l_shipdate < cast(date '1996-01-01' + interval '1 year' as date)
+	and l_discount between 0.05 - 0.01 and 0.05 + 0.01
+	and l_quantity < 25;",active,2014-11-22 08:14:39.103808+01
+1416640484.29194,dbt3,13849,10,mark,psql,,-1,2014-11-22 08:14:34.122194+01,2014-11-22 08:14:34.124024+01,2014-11-22 08:14:34.124234+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_shipmode,
+	sum(case
+		when o_orderpriority = '1-URGENT'
+			or o_orderpriority = '2-HIGH'
+			then 1
+		else 0
+	end) as high_line_count,
+	sum(case
+		when o_orderpriority <> '1-URGENT'
+			and o_orderpriority <> '2-HIGH'
+			then 1
+		else 0
+	end) as low_line_count
+from
+	orders,
+	lineitem
+where
+	o_orderkey = l_orderkey
+	and l_shipmode in ('AIR', 'MAIL')
+	and l_commitdate < l_receiptdate
+	and l_shipdate < l_commitdate
+	and l_receiptdate >= date '1993-01-01'
+	and l_receiptdate < date '1993-01-01' + interval '1 year'
+group by
+	l_shipmode
+order by
+	l_shipmode;",active,2014-11-22 08:14:34.124236+01
+1416640484.29194,dbt3,13825,10,mark,psql,,-1,2014-11-22 08:14:20.287236+01,2014-11-22 08:14:20.288983+01,2014-11-22 08:14:20.289161+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_count,
+	count(*) as custdist
+from
+	(
+		select
+			c_custkey,
+			count(o_orderkey)
+		from
+			customer left outer join orders on
+				c_custkey = o_custkey
+				and o_comment not like '%unusual%packages%'
+		group by
+			c_custkey
+	) as c_orders (c_custkey, c_count)
+group by
+	c_count
+order by
+	custdist desc,
+	c_count desc;",active,2014-11-22 08:14:20.289163+01
+1416640484.29194,dbt3,13659,10,mark,psql,,-1,2014-11-22 08:13:41.320828+01,2014-11-22 08:13:41.322633+01,2014-11-22 08:13:41.322784+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 313
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:13:41.322785+01
+1416640484.29194,dbt3,13917,10,mark,psql,,-1,2014-11-22 08:14:44.290132+01,2014-11-22 08:14:44.291991+01,2014-11-22 08:14:44.291991+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:14:44.291995+01
+1416640484.29194,dbt3,13918,10,mark,psql,,-1,2014-11-22 08:14:44.290195+01,2014-11-22 08:14:44.291938+01,2014-11-22 08:14:44.291938+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:14:44.291943+01
+1416640484.29194,dbt3,13919,10,mark,psql,,-1,2014-11-22 08:14:44.290287+01,2014-11-22 08:14:44.291943+01,2014-11-22 08:14:44.291943+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:14:44.291948+01
+1416640484.29194,dbt3,13920,10,mark,psql,,-1,2014-11-22 08:14:44.290399+01,2014-11-22 08:14:44.291951+01,2014-11-22 08:14:44.291951+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:14:44.291955+01
+1416640484.29194,dbt3,13921,10,mark,psql,,-1,2014-11-22 08:14:44.29051+01,2014-11-22 08:14:44.292032+01,2014-11-22 08:14:44.292032+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:14:44.292037+01
+1416640544.29339,dbt3,14092,10,mark,psql,,-1,2014-11-22 08:15:26.536802+01,2014-11-22 08:15:26.538762+01,2014-11-22 08:15:26.538909+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_custkey,
+	c_name,
+	sum(l_extendedprice * (1 - l_discount)) as revenue,
+	c_acctbal,
+	n_name,
+	c_address,
+	c_phone,
+	c_comment
+from
+	customer,
+	orders,
+	lineitem,
+	nation
+where
+	c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and o_orderdate >= date '1994-07-01'
+	and o_orderdate < cast(date '1994-07-01' + interval '3 month' as date)
+	and l_returnflag = 'R'
+	and c_nationkey = n_nationkey
+group by
+	c_custkey,
+	c_name,
+	c_acctbal,
+	c_phone,
+	n_name,
+	c_address,
+	c_comment
+order by
+	revenue desc
+LIMIT 20;",active,2014-11-22 08:15:26.53891+01
+1416640544.29339,dbt3,14043,10,mark,psql,,-1,2014-11-22 08:15:07.536568+01,2014-11-22 08:15:07.538414+01,2014-11-22 08:15:07.538614+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '77 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:15:07.538616+01
+1416640544.29339,dbt3,14129,10,mark,psql,,-1,2014-11-22 08:15:42.510192+01,2014-11-22 08:15:42.51201+01,2014-11-22 08:15:42.512221+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_acctbal,
+	s_name,
+	n_name,
+	p_partkey,
+	p_mfgr,
+	s_address,
+	s_phone,
+	s_comment
+from
+	part,
+	supplier,
+	partsupp,
+	nation,
+	region
+where
+	p_partkey = ps_partkey
+	and s_suppkey = ps_suppkey
+	and p_size = 26
+	and p_type like '%TIN'
+	and s_nationkey = n_nationkey
+	and n_regionkey = r_regionkey
+	and r_name = 'MIDDLE EAST'
+	and ps_supplycost = (
+		select
+			min(ps_supplycost)
+		from
+			partsupp,
+			supplier,
+			nation,
+			region
+		where
+			p_partkey = ps_partkey
+			and s_suppkey = ps_suppkey
+			and s_nationkey = n_nationkey
+			and n_regionkey = r_regionkey
+			and r_name = 'MIDDLE EAST'
+	)
+order by
+	s_acctbal desc,
+	n_name,
+	s_name,
+	p_partkey
+LIMIT 100;",active,2014-11-22 08:15:42.512223+01
+1416640544.29339,dbt3,13909,10,mark,psql,,-1,2014-11-22 08:14:43.369393+01,2014-11-22 08:14:43.371163+01,2014-11-22 08:14:43.371362+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%dark%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:14:43.371364+01
+1416640544.29339,dbt3,14143,10,mark,psql,,-1,2014-11-22 08:15:44.291594+01,2014-11-22 08:15:44.293395+01,2014-11-22 08:15:44.293395+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:15:44.293399+01
+1416640544.29339,dbt3,14031,10,mark,psql,,-1,2014-11-22 08:15:06.807282+01,2014-11-22 08:15:06.809127+01,2014-11-22 08:15:06.80927+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '109 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:15:06.809272+01
+1416640544.29339,dbt3,14080,10,mark,psql,,-1,2014-11-22 08:15:22.891596+01,2014-11-22 08:15:22.893412+01,2014-11-22 08:15:22.893581+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_shipmode,
+	sum(case
+		when o_orderpriority = '1-URGENT'
+			or o_orderpriority = '2-HIGH'
+			then 1
+		else 0
+	end) as high_line_count,
+	sum(case
+		when o_orderpriority <> '1-URGENT'
+			and o_orderpriority <> '2-HIGH'
+			then 1
+		else 0
+	end) as low_line_count
+from
+	orders,
+	lineitem
+where
+	o_orderkey = l_orderkey
+	and l_shipmode in ('RAIL', 'MAIL')
+	and l_commitdate < l_receiptdate
+	and l_shipdate < l_commitdate
+	and l_receiptdate >= date '1997-01-01'
+	and l_receiptdate < date '1997-01-01' + interval '1 year'
+group by
+	l_shipmode
+order by
+	l_shipmode;",active,2014-11-22 08:15:22.893582+01
+1416640544.29339,dbt3,13951,10,mark,psql,,-1,2014-11-22 08:14:47.938313+01,2014-11-22 08:14:47.941806+01,2014-11-22 08:14:47.942044+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '93 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:14:47.942045+01
+1416640544.29339,dbt3,14145,10,mark,psql,,-1,2014-11-22 08:15:44.291665+01,2014-11-22 08:15:44.293386+01,2014-11-22 08:15:44.293386+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:15:44.293392+01
+1416640544.29339,dbt3,14141,10,mark,psql,,-1,2014-11-22 08:15:44.291484+01,2014-11-22 08:15:44.293416+01,2014-11-22 08:15:44.293416+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:15:44.29342+01
+1416640544.29339,dbt3,14146,10,mark,psql,,-1,2014-11-22 08:15:44.29177+01,2014-11-22 08:15:44.293423+01,2014-11-22 08:15:44.293423+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:15:44.293428+01
+1416640544.29339,dbt3,14147,10,mark,psql,,-1,2014-11-22 08:15:44.291876+01,2014-11-22 08:15:44.293393+01,2014-11-22 08:15:44.293393+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:15:44.293398+01
+1416640604.2958,dbt3,14315,10,mark,psql,,-1,2014-11-22 08:16:32.632552+01,2014-11-22 08:16:32.63447+01,2014-11-22 08:16:32.634605+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	100.00 * sum(case
+		when p_type like 'PROMO%'
+			then l_extendedprice * (1 - l_discount)
+		else 0
+	end) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
+from
+	lineitem,
+	part
+where
+	l_partkey = p_partkey
+	and l_shipdate >= date '1993-05-01'
+	and l_shipdate < cast(date '1993-05-01' + interval '1 month' as date);",active,2014-11-22 08:16:32.634607+01
+1416640604.2958,dbt3,14351,10,mark,psql,,-1,2014-11-22 08:16:37.668088+01,2014-11-22 08:16:37.669867+01,2014-11-22 08:16:37.670019+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	o_orderpriority,
+	count(*) as order_count
+from
+	orders
+where
+	o_orderdate >= date '1994-11-01'
+	and o_orderdate < cast(date '1994-11-01' + interval '3 month' as date)
+	and exists (
+		select
+			*
+		from
+			lineitem
+		where
+			l_orderkey = o_orderkey
+			and l_commitdate < l_receiptdate
+	)
+group by
+	o_orderpriority
+order by
+	o_orderpriority;",active,2014-11-22 08:16:37.67002+01
+1416640604.2958,dbt3,14327,10,mark,psql,,-1,2014-11-22 08:16:34.398313+01,2014-11-22 08:16:34.400032+01,2014-11-22 08:16:34.400205+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_count,
+	count(*) as custdist
+from
+	(
+		select
+			c_custkey,
+			count(o_orderkey)
+		from
+			customer left outer join orders on
+				c_custkey = o_custkey
+				and o_comment not like '%unusual%deposits%'
+		group by
+			c_custkey
+	) as c_orders (c_custkey, c_count)
+group by
+	c_count
+order by
+	custdist desc,
+	c_count desc;",active,2014-11-22 08:16:34.400206+01
+1416640604.2958,dbt3,14279,10,mark,psql,,-1,2014-11-22 08:16:26.133489+01,2014-11-22 08:16:26.135252+01,2014-11-22 08:16:26.135401+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '69 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:16:26.135402+01
+1416640604.2958,dbt3,14267,10,mark,psql,,-1,2014-11-22 08:16:18.973178+01,2014-11-22 08:16:18.974991+01,2014-11-22 08:16:18.975143+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_name,
+	count(*) as numwait
+from
+	supplier,
+	lineitem l1,
+	orders,
+	nation
+where
+	s_suppkey = l1.l_suppkey
+	and o_orderkey = l1.l_orderkey
+	and o_orderstatus = 'F'
+	and l1.l_receiptdate > l1.l_commitdate
+	and exists (
+		select
+			*
+		from
+			lineitem l2
+		where
+			l2.l_orderkey = l1.l_orderkey
+			and l2.l_suppkey <> l1.l_suppkey
+	)
+	and not exists (
+		select
+			*
+		from
+			lineitem l3
+		where
+			l3.l_orderkey = l1.l_orderkey
+			and l3.l_suppkey <> l1.l_suppkey
+			and l3.l_receiptdate > l3.l_commitdate
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'SAUDI ARABIA'
+group by
+	s_name
+order by
+	numwait desc,
+	s_name
+LIMIT 100;",active,2014-11-22 08:16:18.975145+01
+1416640604.2958,dbt3,14339,10,mark,psql,,-1,2014-11-22 08:16:36.280911+01,2014-11-22 08:16:36.282815+01,2014-11-22 08:16:36.282961+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	n_name,
+	sum(l_extendedprice * (1 - l_discount)) as revenue
+from
+	customer,
+	orders,
+	lineitem,
+	supplier,
+	nation,
+	region
+where
+	c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and l_suppkey = s_suppkey
+	and c_nationkey = s_nationkey
+	and s_nationkey = n_nationkey
+	and n_regionkey = r_regionkey
+	and r_name = 'AFRICA'
+	and o_orderdate >= date '1996-01-01'
+	and o_orderdate < date '1996-01-01' + interval '1 year'
+group by
+	n_name
+order by
+	revenue desc;",active,2014-11-22 08:16:36.282963+01
+1416640604.2958,dbt3,14291,10,mark,psql,,-1,2014-11-22 08:16:26.194572+01,2014-11-22 08:16:26.196453+01,2014-11-22 08:16:26.19661+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%wheat%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:16:26.196634+01
+1416640604.2958,dbt3,14255,10,mark,psql,,-1,2014-11-22 08:16:17.347221+01,2014-11-22 08:16:17.348995+01,2014-11-22 08:16:17.349211+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_count,
+	count(*) as custdist
+from
+	(
+		select
+			c_custkey,
+			count(o_orderkey)
+		from
+			customer left outer join orders on
+				c_custkey = o_custkey
+				and o_comment not like '%unusual%deposits%'
+		group by
+			c_custkey
+	) as c_orders (c_custkey, c_count)
+group by
+	c_count
+order by
+	custdist desc,
+	c_count desc;",active,2014-11-22 08:16:17.349213+01
+1416640604.2958,dbt3,14360,10,mark,psql,,-1,2014-11-22 08:16:44.293626+01,2014-11-22 08:16:44.295814+01,2014-11-22 08:16:44.295814+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:16:44.295819+01
+1416640604.2958,dbt3,14361,10,mark,psql,,-1,2014-11-22 08:16:44.293702+01,2014-11-22 08:16:44.295814+01,2014-11-22 08:16:44.295814+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:16:44.295819+01
+1416640604.2958,dbt3,14359,10,mark,psql,,-1,2014-11-22 08:16:44.293525+01,2014-11-22 08:16:44.295805+01,2014-11-22 08:16:44.295805+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:16:44.295811+01
+1416640604.2958,dbt3,14362,10,mark,psql,,-1,2014-11-22 08:16:44.293819+01,2014-11-22 08:16:44.295827+01,2014-11-22 08:16:44.295827+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:16:44.295831+01
+1416640604.2958,dbt3,14363,10,mark,psql,,-1,2014-11-22 08:16:44.293906+01,2014-11-22 08:16:44.29586+01,2014-11-22 08:16:44.29586+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:16:44.295865+01
+1416640664.29743,dbt3,14556,10,mark,psql,,-1,2014-11-22 08:17:38.960839+01,2014-11-22 08:17:38.962626+01,2014-11-22 08:17:38.962849+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_shipmode,
+	sum(case
+		when o_orderpriority = '1-URGENT'
+			or o_orderpriority = '2-HIGH'
+			then 1
+		else 0
+	end) as high_line_count,
+	sum(case
+		when o_orderpriority <> '1-URGENT'
+			and o_orderpriority <> '2-HIGH'
+			then 1
+		else 0
+	end) as low_line_count
+from
+	orders,
+	lineitem
+where
+	o_orderkey = l_orderkey
+	and l_shipmode in ('REG AIR', 'MAIL')
+	and l_commitdate < l_receiptdate
+	and l_shipdate < l_commitdate
+	and l_receiptdate >= date '1993-01-01'
+	and l_receiptdate < date '1993-01-01' + interval '1 year'
+group by
+	l_shipmode
+order by
+	l_shipmode;",active,2014-11-22 08:17:38.962851+01
+1416640664.29743,dbt3,14569,10,mark,psql,,-1,2014-11-22 08:17:43.751788+01,2014-11-22 08:17:43.75367+01,2014-11-22 08:17:43.75384+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_name,
+	count(*) as numwait
+from
+	supplier,
+	lineitem l1,
+	orders,
+	nation
+where
+	s_suppkey = l1.l_suppkey
+	and o_orderkey = l1.l_orderkey
+	and o_orderstatus = 'F'
+	and l1.l_receiptdate > l1.l_commitdate
+	and exists (
+		select
+			*
+		from
+			lineitem l2
+		where
+			l2.l_orderkey = l1.l_orderkey
+			and l2.l_suppkey <> l1.l_suppkey
+	)
+	and not exists (
+		select
+			*
+		from
+			lineitem l3
+		where
+			l3.l_orderkey = l1.l_orderkey
+			and l3.l_suppkey <> l1.l_suppkey
+			and l3.l_receiptdate > l3.l_commitdate
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'PERU'
+group by
+	s_name
+order by
+	numwait desc,
+	s_name
+LIMIT 100;",active,2014-11-22 08:17:43.753842+01
+1416640664.29743,dbt3,14495,10,mark,psql,,-1,2014-11-22 08:17:11.754596+01,2014-11-22 08:17:11.756377+01,2014-11-22 08:17:11.756586+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_shipmode,
+	sum(case
+		when o_orderpriority = '1-URGENT'
+			or o_orderpriority = '2-HIGH'
+			then 1
+		else 0
+	end) as high_line_count,
+	sum(case
+		when o_orderpriority <> '1-URGENT'
+			and o_orderpriority <> '2-HIGH'
+			then 1
+		else 0
+	end) as low_line_count
+from
+	orders,
+	lineitem
+where
+	o_orderkey = l_orderkey
+	and l_shipmode in ('MAIL', 'TRUCK')
+	and l_commitdate < l_receiptdate
+	and l_shipdate < l_commitdate
+	and l_receiptdate >= date '1997-01-01'
+	and l_receiptdate < date '1997-01-01' + interval '1 year'
+group by
+	l_shipmode
+order by
+	l_shipmode;",active,2014-11-22 08:17:11.756588+01
+1416640664.29743,dbt3,14279,10,mark,psql,,-1,2014-11-22 08:16:26.133489+01,2014-11-22 08:16:26.135252+01,2014-11-22 08:16:26.135401+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_returnflag,
+	l_linestatus,
+	sum(l_quantity) as sum_qty,
+	sum(l_extendedprice) as sum_base_price,
+	sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+	sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+	avg(l_quantity) as avg_qty,
+	avg(l_extendedprice) as avg_price,
+	avg(l_discount) as avg_disc,
+	count(*) as count_order
+from
+	lineitem
+where
+	l_shipdate <= date '1998-12-01' - interval '69 days'
+group by
+	l_returnflag,
+	l_linestatus
+order by
+	l_returnflag,
+	l_linestatus;",active,2014-11-22 08:16:26.135402+01
+1416640664.29743,dbt3,14423,10,mark,psql,,-1,2014-11-22 08:16:59.385533+01,2014-11-22 08:16:59.387322+01,2014-11-22 08:16:59.387472+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice,
+	sum(l_quantity)
+from
+	customer,
+	orders,
+	lineitem
+where
+	o_orderkey in (
+		select
+			l_orderkey
+		from
+			lineitem
+		group by
+			l_orderkey having
+				sum(l_quantity) > 315
+	)
+	and c_custkey = o_custkey
+	and o_orderkey = l_orderkey
+group by
+	c_name,
+	c_custkey,
+	o_orderkey,
+	o_orderdate,
+	o_totalprice
+order by
+	o_totalprice desc,
+	o_orderdate
+LIMIT 100;",active,2014-11-22 08:16:59.387474+01
+1416640664.29743,dbt3,14544,10,mark,psql,,-1,2014-11-22 08:17:37.243231+01,2014-11-22 08:17:37.244967+01,2014-11-22 08:17:37.245162+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	s_name,
+	s_address
+from
+	supplier,
+	nation
+where
+	s_suppkey in (
+		select
+			ps_suppkey
+		from
+			partsupp
+		where
+			ps_partkey in (
+				select
+					p_partkey
+				from
+					part
+				where
+					p_name like 'mint%'
+			)
+			and ps_availqty > (
+				select
+					0.5 * sum(l_quantity)
+				from
+					lineitem
+				where
+					l_partkey = ps_partkey
+					and l_suppkey = ps_suppkey
+					and l_shipdate >= '1995-01-01'
+					and l_shipdate < cast(date '1995-01-01' + interval '1 year' as date)
+			)
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'PERU'
+order by
+	s_name;",active,2014-11-22 08:17:37.245163+01
+1416640664.29743,dbt3,14291,10,mark,psql,,-1,2014-11-22 08:16:26.194572+01,2014-11-22 08:16:26.196453+01,2014-11-22 08:16:26.19661+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%wheat%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc;",active,2014-11-22 08:16:26.196634+01
+1416640664.29743,dbt3,14508,10,mark,psql,,-1,2014-11-22 08:17:18.527035+01,2014-11-22 08:17:18.52879+01,2014-11-22 08:17:18.528999+01,f,"EXPLAIN (ANALYZE, BUFFERS)
+select
+	l_orderkey,
+	sum(l_extendedprice * (1 - l_discount)) as revenue,
+	o_orderdate,
+	o_shippriority
+from
+	customer,
+	orders,
+	lineitem
+where
+	c_mktsegment = 'BUILDING'
+	and c_custkey = o_custkey
+	and l_orderkey = o_orderkey
+	and o_orderdate < date '1995-03-15'
+	and l_shipdate > date '1995-03-15'
+group by
+	l_orderkey,
+	o_orderdate,
+	o_shippriority
+order by
+	revenue desc,
+	o_orderdate
+LIMIT 10;",active,2014-11-22 08:17:18.529+01
+1416640664.29743,dbt3,14577,10,mark,psql,,-1,2014-11-22 08:17:44.295517+01,2014-11-22 08:17:44.297499+01,2014-11-22 08:17:44.297499+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, numbackends, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted FROM pg_stat_database) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:17:44.297505+01
+1416640664.29743,dbt3,14578,10,mark,psql,,-1,2014-11-22 08:17:44.295611+01,2014-11-22 08:17:44.297284+01,2014-11-22 08:17:44.297284+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, relname, pid, mode, granted FROM pg_locks, pg_class WHERE relfilenode = relation ORDER BY relname) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:17:44.297289+01
+1416640664.29743,dbt3,14576,10,mark,psql,,-1,2014-11-22 08:17:44.295379+01,2014-11-22 08:17:44.297427+01,2014-11-22 08:17:44.297427+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, datname, pid, usesysid, usename, application_name, client_addr, client_port, backend_start, xact_start, query_start, waiting, query , state, state_change FROM pg_stat_activity) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:17:44.297432+01
+1416640664.29743,dbt3,14579,10,mark,psql,,-1,2014-11-22 08:17:44.295721+01,2014-11-22 08:17:44.297418+01,2014-11-22 08:17:44.297418+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, a.indexrelname, idx_scan, idx_tup_read, idx_tup_fetch, idx_blks_read, idx_blks_hit FROM pg_stat_all_indexes a, pg_statio_all_indexes b WHERE a.indexrelid = b.indexrelid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:17:44.297422+01
+1416640664.29743,dbt3,14580,10,mark,psql,,-1,2014-11-22 08:17:44.295816+01,2014-11-22 08:17:44.297506+01,2014-11-22 08:17:44.297506+01,f,"COPY (SELECT EXTRACT(EPOCH FROM TRANSACTION_TIMESTAMP()) AS ctime, a.schemaname, a.relname, seq_scan, seq_tup_read, idx_scan, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del, n_tup_hot_upd, n_live_tup, n_dead_tup, heap_blks_read, heap_blks_hit, idx_blks_read, idx_blks_hit, toast_blks_read, toast_blks_hit, tidx_blks_read, tidx_blks_hit FROM pg_statio_all_tables a, pg_stat_all_tables b WHERE a.relid = b.relid) TO STDOUT (FORMAT CSV);",active,2014-11-22 08:17:44.297511+01
